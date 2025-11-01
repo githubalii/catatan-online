@@ -1,0 +1,197 @@
+/* === Tema Netral & Profesional dengan Transisi Halus dan Gradasi Dinamis === */
+
+* {
+    transition: color 0.4s ease, background-color 0.4s ease, border-color 0.4s ease;
+}
+
+body {
+    font-family: "Segoe UI", sans-serif;
+    background: linear-gradient(120deg, #e0e5ec, #cfd8dc, #b0bec5);
+    background-size: 300% 300%;
+    color: #2b2b2b;
+    margin: 0;
+    padding: 0;
+    animation: gradientShift 12s ease infinite;
+}
+
+/* 🌈 Animasi gradasi halus untuk body */
+@keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.container {
+    width: 500px;
+    margin: 40px auto;
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
+h1 {
+    color: #1e3a5f;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.controls {
+    display: flex;
+    gap: 10px;
+}
+
+#searchInput {
+    padding: 8px;
+    border: 1px solid #aaa;
+    border-radius: 8px;
+    background-color: #f5f5f5;
+}
+
+#toggleTheme {
+    background: #3f51b5;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    padding: 8px 12px;
+    font-weight: 600;
+    transition: transform 0.3s ease, background 0.3s ease;
+}
+
+#toggleTheme:hover {
+    background-color: #283593;
+    transform: scale(1.05);
+}
+
+.add-form {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.add-form input {
+    flex: 1;
+    padding: 10px;
+    border: 2px solid #b0bec5;
+    border-radius: 8px;
+    margin-right: 10px;
+    background-color: #f7f7f7;
+}
+
+.add-form button {
+    background-color: #3f51b5;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.add-form button:hover {
+    background-color: #283593;
+    transform: scale(1.03);
+}
+
+.note {
+    background: #f0f4f8;
+    border-radius: 10px;
+    padding: 10px 15px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-left: 4px solid #3f51b5;
+}
+
+.note p {
+    margin: 0;
+    flex: 1;
+}
+
+.actions button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    margin-left: 5px;
+    transition: transform 0.2s ease;
+}
+
+.actions button:hover {
+    transform: scale(1.1);
+}
+
+.actions .edit { color: #1976d2; }
+.actions .delete { color: #d32f2f; }
+
+.edit-form {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.edit-form input {
+    padding: 8px;
+    border-radius: 8px;
+    border: 1px solid #bbb;
+}
+
+.edit-form button {
+    margin-left: 10px;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 8px;
+    background-color: #3f51b5;
+    color: white;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.edit-form button:hover {
+    background-color: #283593;
+    transform: scale(1.03);
+}
+
+/* 🌙 DARK MODE */
+body.dark {
+    background: linear-gradient(120deg, #212121, #1a1a1a, #101010);
+    background-size: 300% 300%;
+    color: #eee;
+    animation: gradientShift 15s ease infinite;
+}
+
+body.dark .container {
+    background: #181818;
+    box-shadow: 0 0 15px rgba(255,255,255,0.05);
+}
+
+body.dark input,
+body.dark button,
+body.dark .note {
+    background-color: #232324;
+    color: #eee;
+    border-color: #363638;
+}
+
+body.dark .note {
+    background: #2c2c2c;
+    border-left: 4px solid #90caf9;
+}
+
+body.dark #toggleTheme {
+    background: #b0bec5;
+    color: #1a1a1a;
+}
+
+/* 🌙 Judul berubah warna saat dark mode */
+body.dark h1 {
+    color: #90caf9;
+}

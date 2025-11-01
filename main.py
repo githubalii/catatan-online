@@ -1,54 +1,81 @@
-from fastapi import FastAPI, Form, Request
+from fastapi import FastAPI, Request, Form
 from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
-from sqlmodel import Field, Session, SQLModel, create_engine, select
+from fastapi.staticfiles import StaticFiles
 
-# --- Inisialisasi FastAPI ---
+from sqlalchemy import Column, Integer, String, DateTime, create_engine
+from sqlalchemy.orm import declarative_base, sessionmaker, Session
+from datetime import datetime
+from typing import List
+
+# =====================================================
+# 🚀 KONFIGURASI DASAR
+# =====================================================
 app = FastAPI()
 
-# --- Setup template engine (Jinja2) ---
+# Mount folder static (CSS, JS, gambar)
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
 templates = Jinja2Templates(directory="templates")
 
-# --- Model database ---
-class Catatan(SQLModel, table=True):
-    id: int | None = Field(default=None, primary_key=True)
-    isi: str
+# =====================================================
+# 🧩 DATABASE SETUP
+# =====================================================
+Base = declarative_base()
 
-# --- Setup database ---
-sqlite_file_name = "database.db"
+class Note(Base):
+    __tablename__ = "note"
+
+    id = Column(Integer, primary_key=True, index=True)
+    content = Column(String, nullable=False)
+    created_at = Column(DateTime, default=datetime.now)  # ✅ otomatis isi waktu
+
+# Buat engine SQLite
+sqlite_file_name = "notes.db"
 sqlite_url = f"sqlite:///{sqlite_file_name}"
-engine = create_engine(sqlite_url, echo=False)
+engine = create_engine(sqlite_url, echo=True)
 
-def create_db_and_tables():
-    SQLModel.metadata.create_all(engine)
+# Session untuk interaksi database
+SessionLocal = sessionmaker(bind=engine, autocommit=False, autoflush=False)
 
-@app.on_event("startup")
-def on_startup():
-    create_db_and_tables()
+# Buat tabel jika belum ada
+Base.metadata.create_all(bind=engine)
 
-# --- Routes ---
+# =====================================================
+# 🌐 ROUTES
+# =====================================================
+
 @app.get("/")
-def read_root(request: Request):
-    """Tampilkan semua catatan."""
-    with Session(engine) as session:
-        notes = session.exec(select(Catatan)).all()
+def home(request: Request):
+    with SessionLocal() as session:
+        notes: List[Note] = session.query(Note).all()
     return templates.TemplateResponse("index.html", {"request": request, "notes": notes})
 
-@app.post("/add")
-def add_note(note: str = Form(...)):
-    """Tambah catatan ke database."""
-    with Session(engine) as session:
-        catatan = Catatan(isi=note)
-        session.add(catatan)
-        session.commit()
-    return RedirectResponse("/", status_code=303)
 
-@app.get("/delete/{note_id}")
+@app.post("/add")
+def add_note(content: str = Form(...)):
+    with SessionLocal() as session:
+        note = Note(content=content)
+        session.add(note)
+        session.commit()
+    return RedirectResponse(url="/", status_code=303)
+
+
+@app.post("/edit/{note_id}")
+def edit_note(note_id: int, content: str = Form(...)):
+    with SessionLocal() as session:
+        note = session.get(Note, note_id)
+        if note:
+            note.content = content
+            session.commit()
+    return RedirectResponse(url="/", status_code=303)
+
+
+@app.post("/delete/{note_id}")
 def delete_note(note_id: int):
-    """Hapus catatan berdasarkan ID."""
-    with Session(engine) as session:
-        note = session.get(Catatan, note_id)
+    with SessionLocal() as session:
+        note = session.get(Note, note_id)
         if note:
             session.delete(note)
             session.commit()
-    return RedirectResponse("/", status_code=303)
+    return RedirectResponse(url="/", status_code=303)
